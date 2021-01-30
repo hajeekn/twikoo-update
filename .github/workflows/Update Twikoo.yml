@@ -1,0 +1,35 @@
+name: Auto Update && Deploy Twikoo
+
+on: [repository_dispatch,workflow_dispatch,push]
+
+jobs:
+  build:
+    name: Auto Update && Deploy Twikoo
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+    steps:
+      - uses: actions/checkout@main
+      - name: Setup Node.js 10.x
+        uses: actions/setup-node@main
+        with:
+         node-version: "10.x"
+      - name: Run
+        run: |
+          git clone -b dev https://github.com/imaegoo/twikoo.git
+          npm i -g @cloudbase/cli
+          tcb login --apiKeyId "${{ secrets.SECRETID }}" --apiKey "${{ secrets.SECRETKEY }}"
+          tcb fn deploy "twikoo" -e "${{ secrets.TCBENVID }}" --force --dir ./twikoo/src/function/twikoo
+      - name: Delete Workflow Runs
+        uses: Mattraks/delete-workflow-runs@main
+        with:
+          retain_days: 1
+          keep_minimum_runs: 1
+      - name: Telegram Notification
+        if: cancelled() == false
+        uses: xinthink/action-telegram@v1.1
+        with:
+          botToken: ${{ secrets.TG_BOT_TOKEN }}
+          chatId: ${{ secrets.TG_CHAT_ID }}
+          jobStatus: ${{ job.status }}
+          skipSuccess: false

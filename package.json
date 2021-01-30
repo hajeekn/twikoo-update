@@ -1,0 +1,7 @@
+{
+  "name": "twikoo",
+  "version": "0.0.0",
+  "devDependencies": {
+    "twikoo": "1.2.0"
+  }
+}
