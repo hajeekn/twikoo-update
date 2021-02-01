@@ -1,25 +1,26 @@
-name: Auto Update && Deploy Twikoo
-
-on: [repository_dispatch,workflow_dispatch,push]
+name: Update Twikoo
+on:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
-    name: Auto Update && Deploy Twikoo
     runs-on: ubuntu-latest
     env:
       TZ: Asia/Shanghai
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v2
       - name: Setup Node.js 10.x
-        uses: actions/setup-node@main
+        uses: actions/setup-node@master
         with:
          node-version: "10.x"
       - name: Run
         run: |
-          git clone -b dev https://github.com/imaegoo/twikoo.git
+          git clone https://github.com/imaegoo/twikoo.git
           npm i -g @cloudbase/cli
           tcb login --apiKeyId "${{ secrets.SECRETID }}" --apiKey "${{ secrets.SECRETKEY }}"
-          tcb fn deploy "twikoo" -e "${{ secrets.TCBENVID }}" --force --dir ./twikoo/src/function/twikoo
+          tcb fn deploy "${{ secrets.TCBFUNNAME }}" -e "${{ secrets.TCBENVID }}" --force --dir ./twikoo/src/function/twikoo
+          curl https://purge.jsdelivr.net/gh/ladjeek-actions/twikoo-update@main/package.json
       - name: Delete Workflow Runs
         uses: Mattraks/delete-workflow-runs@main
         with:
