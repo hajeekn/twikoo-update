@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-node@master
         with:
          node-version: "10.x"
-      - name: Run
+      - name: Lancher Job
         run: |
           git clone https://github.com/imaegoo/twikoo.git
           npm i -g @cloudbase/cli
