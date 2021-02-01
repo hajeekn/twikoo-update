@@ -19,7 +19,7 @@ jobs:
           git clone https://github.com/imaegoo/twikoo.git
           npm i -g @cloudbase/cli
           tcb login --apiKeyId "${{ secrets.SECRETID }}" --apiKey "${{ secrets.SECRETKEY }}"
-          tcb deploy -e "${{ secrets.TCBENVID }}" --force
+          tcb fn deploy -e "${{ secrets.TCBENVID }}" --force
       - name: Purge Jsdelivr CDN
         run: |
           curl https://purge.jsdelivr.net/gh/ladjeek-actions/twikoo-update@main/package.json
